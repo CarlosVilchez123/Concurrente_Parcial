@@ -22,6 +22,7 @@ public class TcpServer{
     }
 
     public void enviarMensajeTcp(double[][] mensaje){
+        System.out.println("Se esta enviando a los clientes");
         for(int i=1; i<=numClient; i++){
             sendClient[i].enviarMensaje(mensaje);
         }
@@ -55,7 +56,7 @@ public class TcpServer{
 
         }
     }
-    //Interfaz hecha para poder recivir mensajes
+    //Interfaz hecha para poder recibir mensajes
     public  interface OnMessageReceived {
         public void messageReceived(double[][] message);
     }

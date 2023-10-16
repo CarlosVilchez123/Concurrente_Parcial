@@ -17,7 +17,7 @@ public class Client {
                     mTcpClient = new TcpClient("192.168.100.25",
                         new TcpClient.OnMessageReceived() {
                             @Override
-                            public void messageReceived(double[] message){
+                            public void messageReceived(double[][] message){
                                 mensajeRecibido(message);
                             }
                         }
@@ -38,10 +38,13 @@ public class Client {
         System.out.println("Cliente bandera 02");
     }
 
-    void mensajeRecibido(double[] message){
+    void mensajeRecibido(double[][] message){
         System.out.println("llego mi array");
         for(int i=0; i<message.length; i++){
-            System.out.print(message[i] + " ");
+            System.out.println("array "+i+": ");
+            for(int j=0; j<message[i].length; j++){
+                System.out.println(message[i][j]);
+            }
         }
     }
 }

@@ -2,7 +2,7 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 public class TcpClient{
-    private double[] serverMessage;
+    private double[][] serverMessage;
     public  String SERVERIP;
     public static final int SERVERPORT = 4444;
     private OnMessageReceived mMessageListener = null;
@@ -20,21 +20,27 @@ public class TcpClient{
         mRun=true;
         try {
             InetAddress serverAddr = InetAddress.getByName(SERVERIP);
-            System.out.println("TCP Client"+ "C: Conectando...");
+            System.out.println("TCP Client" + "C: Conectando...");
             Socket socket = new Socket(serverAddr, SERVERPORT);
             try {
-               
                 out = new DataOutputStream(socket.getOutputStream());
-                System.out.println("Client"+ "C: Sent.");
-                System.out.println("Client"+ "C: Done.");
+                System.out.println("Client" + "C: Sent.");
+                System.out.println("Client" + "C: Done.");
                 in = new DataInputStream(socket.getInputStream());
-                System.out.println("llego supongo");
+                
                 while (mRun) {
-                    System.out.println("BANDERA GA");
-                    int arrayLength = in.readInt();
-                    serverMessage = new double[arrayLength];
-                    for (int i = 0; i < arrayLength; i++) {
-                        serverMessage[i] = in.readDouble();
+                    int arrayCount = in.readInt();
+
+                    serverMessage = new double[arrayCount][];
+                    for (int i = 0; i < arrayCount; i++) {
+                        int arrayLength = in.readInt();
+                        System.out.println(arrayLength);
+                        
+                        double[] subArray = new double[arrayLength];
+                        for (int j = 0; j < arrayLength; j++) {
+                            subArray[j] = in.readDouble();
+                        }
+                        serverMessage[i] = subArray;
                     }
                     if (mMessageListener != null) {
                         mMessageListener.messageReceived(serverMessage);
@@ -53,6 +59,6 @@ public class TcpClient{
     }
 
     public interface OnMessageReceived {
-        public void messageReceived(double[] message);
+        public void messageReceived(double[][] message);
     }
 }

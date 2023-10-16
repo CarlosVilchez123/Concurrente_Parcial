@@ -19,7 +19,7 @@ public class ServerHilos extends Thread{
 
     public DataOutputStream mOut;
     public DataInputStream in;
-    public double[] mensaje;
+    public double[][] mensaje;
 
     ServerHilos[] clients;
 
@@ -41,6 +41,23 @@ public class ServerHilos extends Thread{
                 messageListener = tcpServer.getMessageListener();
                 in = new DataInputStream(client.getInputStream());
 
+                while (running) {
+                    System.out.println("entro al while del recivimiento de datos");
+                    int arrayCount = in.readInt();
+                    mensaje = new double[arrayCount][];
+                    for (int i = 0; i < arrayCount; i++) {
+                        int arrayLength = in.readInt();
+                        double[] subArray = new double[arrayLength];
+                        for (int j = 0; j < arrayLength; j++) {
+                            subArray[j] = in.readDouble();
+                        }
+                        mensaje[i] = subArray;
+                    }
+                    if (messageListener != null) {
+                        messageListener.messageReceived(mensaje);
+                    }
+                }
+
                 System.out.println("CLIENT"+ "S: Received Message: '" + mensaje + "'");
             }catch(Exception e){
                 System.out.println("Error del servdior :,v: "+ e);
@@ -53,22 +70,25 @@ public class ServerHilos extends Thread{
     }
 
    public void enviarMensaje(double[][] message){
+        System.out.println("entro al metodo de envia mensaje de ServerHilos");
+        System.out.println(message.length);
         if (mOut != null) {
             try {
-                // Send the number of rows and columns in the 2D array
                 mOut.writeInt(message.length);
-                mOut.writeInt(message[0].length); // Assuming all rows have the same number of columns
-
-                // Send the individual double values
                 for (int i = 0; i < message.length; i++) {
+                    System.out.println("entro al primer for");
+                    mOut.writeInt(message[i].length);
                     for (int j = 0; j < message[i].length; j++) {
+                        System.out.println(message[i][j]);
                         mOut.writeDouble(message[i][j]);
                     }
                 }
+                System.out.println("salio del bucle");
                 mOut.flush();
             } catch (Exception e) {
                 System.out.println("Error al enviar mensaje: " + e);
             }
         }
+        
     }
 }

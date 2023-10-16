@@ -38,7 +38,7 @@ public class Server {
     }
 
     void ServidorEnvia(String envia){
-        double[] hola = {2.0, 2.0, 3.0};
+        double[][] hola = {{2.0}, {2.0,5.0}, {3.0}};
         mTcpServer.enviarMensajeTcp(hola);
     }
 }
