@@ -1,7 +1,5 @@
 import socket
 
-
-
 def Conecction():
 
     server_address = ('192.168.100.25', 4444)

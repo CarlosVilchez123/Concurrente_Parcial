@@ -5,6 +5,7 @@ import java.net.Socket;
 
 public class TcpServer{
 
+    private KMeansServer Kserver;
     private double[][] message;
     private static final int SERVERPORT=4444;
     private OnMessageReceived messageListener=null;
@@ -22,11 +23,15 @@ public class TcpServer{
     }
 
     public void enviarMensajeTcp(double[][] mensaje){
-        System.out.println("Se esta enviando a los clientes");
+        Kserver = new KMeansServer(mensaje, numClient, 3);
+        Kserver.printDataSet();
+    
         for(int i=1; i<=numClient; i++){
-            sendClient[i].enviarMensaje(mensaje);
+            sendClient[i].enviarMensaje(Kserver.divideDataSet(i));
+            sendClient[i].enviarMensaje(Kserver.getCentroids());
         }
     }
+
     public OnMessageReceived getMessageListener(){
         return this.messageListener;
     }
@@ -55,6 +60,14 @@ public class TcpServer{
         }finally{
 
         }
+    }
+
+    public int getNumClient(){
+        return numClient;
+    }
+
+    public KMeansServer getKServer(){
+        return Kserver;
     }
     //Interfaz hecha para poder recibir mensajes
     public  interface OnMessageReceived {

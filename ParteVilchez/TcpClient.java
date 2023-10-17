@@ -16,6 +16,23 @@ public class TcpClient{
         mMessageListener = listener;
     }
 
+    public void enviarMensaje(double[][] message){
+        if (out != null) {
+            try {
+                out.writeInt(message.length);
+                for (int i = 0; i < message.length; i++) {
+                    out.writeInt(message[i].length);
+                    for (int j = 0; j < message[i].length; j++) {
+                        out.writeDouble(message[i][j]);
+                    }
+                }
+                out.flush();
+            } catch (Exception e) {
+                System.out.println("Error al enviar mensaje: " + e);
+            }
+        }
+        
+    }
     public void run(){
         mRun=true;
         try {
@@ -34,7 +51,6 @@ public class TcpClient{
                     serverMessage = new double[arrayCount][];
                     for (int i = 0; i < arrayCount; i++) {
                         int arrayLength = in.readInt();
-                        System.out.println(arrayLength);
                         
                         double[] subArray = new double[arrayLength];
                         for (int j = 0; j < arrayLength; j++) {
@@ -46,7 +62,6 @@ public class TcpClient{
                         mMessageListener.messageReceived(serverMessage);
                     }
                 }
-                System.out.println("no hace nada GAAAAAAA");
             } catch (Exception e) {
                 System.out.println("Error del servidor "+e.getMessage());
 

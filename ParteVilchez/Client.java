@@ -1,5 +1,8 @@
 import java.util.Scanner;
 public class Client {
+    static int cont=1;
+    static double[][] data;
+    static double[][] centroides;
     TcpClient mTcpClient;
     Scanner sc;
 
@@ -30,21 +33,38 @@ public class Client {
 
         String salir = "n";
         sc = new Scanner(System.in);
-        System.out.println("Cliente bandera 01");
         while( !salir.equals("s")){
             salir = sc.nextLine();
-
         }
-        System.out.println("Cliente bandera 02");
     }
 
     void mensajeRecibido(double[][] message){
-        System.out.println("llego mi array");
-        for(int i=0; i<message.length; i++){
-            System.out.println("array "+i+": ");
-            for(int j=0; j<message[i].length; j++){
-                System.out.println(message[i][j]);
-            }
+        if(cont==2){
+            centroides=message;
+            ClienteEnvia();
+            cont=1;
+        }else{
+            data=message;
+            cont++;
         }
+    }
+
+    void ClienteEnvia(){
+        KMeansClient Kcliente = new KMeansClient(data, centroides);
+        Kcliente.updateIndexes();
+        int[] auxiliar = Kcliente.getIndexes(); // [{2,3,3,4,4,5}]
+        System.out.print("AUXILIAR: ");
+        /* 
+        for(int i=0; i<auxiliar.length; i++){
+            System.out.println(auxiliar[i] + " ");
+        }*/
+        double[][] envioIndex = new double[1][auxiliar.length];
+        for(int i=0; i<auxiliar.length; i++){
+            envioIndex[0][i] = (double)auxiliar[i];
+        }
+        for(int i=0; i<auxiliar.length; i++){
+            System.out.print(envioIndex[0][i]+" ");
+        }
+        mTcpClient.enviarMensaje(envioIndex);
     }
 }
